@@ -6,23 +6,25 @@ import UserReviews from "@/components/base/UserReviews";
 import { auth, CustomSession } from "@/auth";
 
 export default async function Home() {
-  const session: CustomSession | null = await auth();
+    const session: CustomSession | null = await auth();
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <Navbar user={session?.user} />
-      {/* Hero Section */}
-      <HeroSection />
+    
 
-      {/* Features Section */}
-      <FeatureSection />
+    return (
+        <div className="min-h-screen flex flex-col">
+            {/* Header */}
+            <Navbar user={session?.user} />
+            {/* Hero Section */}
+            <HeroSection />
 
-      {/* User Reviews Section */}
-      <UserReviews />
+            {/* Features Section */}
+            <FeatureSection />
 
-      {/* Footer */}
-      <Footer />
-    </div>
-  );
+            {/* User Reviews Section */}
+            <UserReviews />
+
+            {/* Footer */}
+            <Footer />
+        </div>
+    );
 }

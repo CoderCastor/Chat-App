@@ -1,74 +1,89 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useForm } from "react-hook-form";
+
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    createChatSchema,
-    createChatSchemaType,
-} from "@/validations/groupChatValidation";
 import { Input } from "../ui/input";
-import { CustomUser } from "@/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+
 import axios, { AxiosError } from "axios";
+
 import { toast } from "sonner";
+import { clearCache } from "@/actions/common";
+import { CustomUser } from "@/auth";
+import { ChatGroupType } from "@/types";
 import { CHAT_GROUP_URL } from "@/lib/apiEndPoints";
-import { clearCache } from "@/actions/common"
-export default function CreateChat({ user }: { user: CustomUser }) {
-    const [open, setOpen] = useState(false);
+import { createChatSchema, createChatSchemaType } from "@/validations/groupChatValidation";
+
+export default function EditGroupChat({
+    user,
+    group,
+    open,
+    setOpen,
+}: {
+    user: CustomUser;
+    group: ChatGroupType;
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
+}) {
     const [loading, setLoading] = useState(false);
 
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<createChatSchemaType>({
         resolver: zodResolver(createChatSchema),
     });
 
+    useEffect(() => {
+        setValue("title", group.title);
+        setValue("passcode", group.passcode);
+    }, [group]);
+
     const onSubmit = async (payload: createChatSchemaType) => {
+        // console.log("The payload is", payload);
         try {
-            console.log("User ",user)
             setLoading(true);
-            const { data } = await axios.post(
-                CHAT_GROUP_URL,
-                { ...payload, user_id: user.id },
+            const { data } = await axios.put(
+                `${CHAT_GROUP_URL}/${group.id}`,
+                payload,
                 {
                     headers: {
                         Authorization: user.token,
                     },
                 }
             );
-            if(data.message){
-                await clearCache("dashboard");
-                setLoading(false)
-                setOpen(false)
-                toast.success(data?.message)
+
+            if (data?.message) {
+                setOpen(false);
+                toast.success(data?.message);
+                clearCache("dashboard");
             }
+            setLoading(false);
         } catch (error) {
             setLoading(false);
             if (error instanceof AxiosError) {
                 toast.error(error.message);
             } else {
-                toast.error("Something went wrong.Please try again!");
+                toast.error("Something went wrong.please try again!");
             }
         }
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button>Create Group</Button>
-            </DialogTrigger>
             <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
-                    <DialogTitle>Create you new chat</DialogTitle>
+                    <DialogTitle>Update group chat</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="mt-4">
@@ -76,22 +91,22 @@ export default function CreateChat({ user }: { user: CustomUser }) {
                             placeholder="Enter chat title"
                             {...register("title")}
                         />
-                        <span className="text-red-500">
+                        <span className="text-red-400">
                             {errors.title?.message}
                         </span>
                     </div>
                     <div className="mt-4">
                         <Input
-                            placeholder="Enter chat passcode"
+                            placeholder="Enter passcode"
                             {...register("passcode")}
                         />
-                        <span className="text-red-500">
+                        <span className="text-red-400">
                             {errors.passcode?.message}
                         </span>
                     </div>
                     <div className="mt-4">
                         <Button className="w-full" disabled={loading}>
-                            {loading ? "Processing..." : "Submit"}
+                            {loading ? "Processing.." : "Submit"}
                         </Button>
                     </div>
                 </form>

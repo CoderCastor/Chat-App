@@ -36,7 +36,7 @@ export default async function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
             >
-                <Toaster richColors duration={10000}/>
+                <Toaster richColors duration={3000}/>
                 <SessionProvider session={session}>{children}</SessionProvider>
             </body>
         </html>
