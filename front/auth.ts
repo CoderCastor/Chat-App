@@ -27,12 +27,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             account,
         }: {
             user: CustomUser;
-            account?: any;
+            account?: Account | null;
         }) {
             try {
-                if(!account){
-                    console.log("Account is null",account)
-                    return false
+                if (!account) {
+                    console.log("Account is null", account);
+                    return false;
                 }
                 console.log("The user data is ", user);
                 console.log("The account data is ", account);
@@ -45,16 +45,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 };
                 const { data } = await axios.post(LOGIN_URL, payload);
                 user.id = data?.user?.id.toString();
-                user.token = data?.use?.token;
-                user.provider = data.user.provider
+                user.token = data?.user?.token;
+                user.provider = data.user.provider;
                 return true;
             } catch (error) {
                 return false;
             }
         },
         async session({
-            session,
-            
+            session,    
             token,
         }: {
             session: CustomSession;
