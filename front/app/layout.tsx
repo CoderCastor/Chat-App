@@ -21,8 +21,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: "Chat App",
-    description: "Chat anytime with me",
+    title: "Manthan",
+    description: "Chat anytime with Manthan",
 };
 
 export default async function RootLayout({
