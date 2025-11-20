@@ -18,7 +18,7 @@ const io = new Server(server, {
     cors: {
         origin: "*",
     },
-    adapter: createAdapter(redis),
+    // adapter: createAdapter(redis),
 });
 
 setupSocket(io);
