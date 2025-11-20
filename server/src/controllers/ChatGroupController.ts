@@ -27,6 +27,7 @@ class ChatGroupController {
     static async show(req: Request, res: Response) {
         try {
             const { id } = req.params;
+            console.log(id)
             const group = await prisma.chatGroup.findUnique({
                 where: {
                     id: id,

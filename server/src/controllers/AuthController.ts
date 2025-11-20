@@ -1,4 +1,3 @@
-
 import type { Request, Response } from "express";
 import prisma from "../config/db.config.js";
 import jwt from "jsonwebtoken";
